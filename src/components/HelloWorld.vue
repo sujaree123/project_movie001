@@ -1,58 +1,62 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div>
+    <img alt="Vue logo" src="../assets/m5.png" />
+    <b-container fluid class="bv-example-row mb-4 mt-2">
+      <input type="text" v-model="textSearch" />
+      <button @click="searchData()">Serch</button>
+    </b-container>
+    <template v-if="this.t != ''">
+      <b-container fluid class="bv-example-row">
+        <b-row align-h="around mr-4 ml-4">
+          <b-card
+            v-for="list in playlist"
+            :key="list.id"
+            :title="list.title"
+            :img-src="'http://image.tmdb.org/t/p/w600_and_h900_bestv2' + list.poster_path "
+            img-top
+            tag="article"
+            style="max-width: 20rem;"
+            class="mb-4"
+          >
+            <b-button :href="'https://www.themoviedb.org/movie/' + list.id " variant="primary">More</b-button>
+          </b-card>
+        </b-row>
+      </b-container>
+    </template>
+    <!-- {{ playlist }}-->
   </div>
 </template>
-
 <script>
+import axios from "axios";
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  data() {
+    return {
+      playlist: null,
+      textSearch: "",
+      t: this.textSearch,
+    };
+  },
+  methods: {
+    searchData() {
+      axios
+        .get(
+          "https://api.themoviedb.org/3/search/movie?query=" +
+            this.textSearch +
+            "&api_key=feb6f0eeaa0a72662967d77079850353"
+        )
+        .then((Response) => {
+          this.playlist = Response.data.results;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.err = true;
+        });
+    },
+  },
+};
 </script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+<style>
+body {
+  background-image: url("../assets/bg.jpg");
 }
 </style>
